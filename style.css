@@ -530,8 +530,8 @@ a {
 
 .gallery-track .gallery-slide {
   scroll-snap-align: start;
-  min-width: 220px;
-  height: 140px;
+  width: 260px; /* fixed width to match box sizing */
+  height: 160px; /* fixed height */
   flex: 0 0 auto;
   border-radius: 14px;
   background: var(--surface);
@@ -540,6 +540,24 @@ a {
   justify-content:center;
   padding: 12px;
   box-shadow: 0 6px 18px rgba(16,32,63,0.04);
+}
+
+/* Ensure images fit inside slide boxes */
+.gallery-slide img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.gallery-track .gallery-slide img {
+  width: 220px; /* fixed desktop image size */
+  height: 120px;
+  object-fit: contain;
+  border-radius: 12px;
+  display: block;
 }
 
 /* Hide native scrollbar on modern browsers (keep for accessibility) */
@@ -555,21 +573,21 @@ a {
 @media (max-width: 900px) {
   .gallery-track {
     display: flex;
-    gap: 14px;
+    gap: 18px;
     padding-left: 18px;
     padding-right: 18px;
   }
 
   .gallery-track .gallery-slide {
-    min-width: 78%; /* show partial next slide */
-    height: auto;
-    padding: 18px;
+    width: 300px; /* fixed mobile slide width */
+    height: 180px; /* fixed mobile slide height */
+    padding: 14px;
   }
 
   .gallery-slide img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+    width: 260px; /* fixed image size for mobile */
+    height: 140px;
+    object-fit: contain;
     border-radius: 12px;
   }
 }
@@ -607,6 +625,18 @@ a {
 
 @media (max-width: 640px) {
   .gallery-btn { display: none; }
+
+  .gallery-track .gallery-slide {
+    width: 300px; /* consistent small-screen width */
+    height: 160px;
+    padding: 12px;
+  }
+
+  .gallery-slide img {
+    width: 260px;
+    height: 120px;
+    object-fit: contain;
+  }
 }
 
 .review-label {

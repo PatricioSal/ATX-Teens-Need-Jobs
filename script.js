@@ -92,7 +92,6 @@ function renderGallery() {
       const img = document.createElement('img');
       img.src = it.src;
       img.alt = it.alt || '';
-      img.style.maxHeight = '100%';
       slide.appendChild(img);
     } else {
       const span = document.createElement('div');
