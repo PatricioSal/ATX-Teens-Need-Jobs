@@ -507,25 +507,29 @@ a {
 }
 
 .gallery-grid {
-  display: flex;
-  justify-content: center;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: block;
 }
 
+/* Desktop: two-row horizontal grid that scrolls by column */
 .gallery-track {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-rows: 140px;
-  grid-template-rows: repeat(2, 140px);
+  grid-auto-rows: 160px;
+  grid-template-rows: repeat(2, 160px);
   gap: 20px;
   align-items: center;
-  justify-content: center;
-  overflow: visible;
-  width: auto;
-  height: calc(140px * 2 + 20px); /* 2 rows + gap */
-  max-width: 90vw;
+  justify-content: start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 8px;
 }
+
 .gallery-track .gallery-slide {
+  scroll-snap-align: start;
   min-width: 220px;
   height: 140px;
   flex: 0 0 auto;
@@ -535,6 +539,74 @@ a {
   align-items:center;
   justify-content:center;
   padding: 12px;
+  box-shadow: 0 6px 18px rgba(16,32,63,0.04);
+}
+
+/* Hide native scrollbar on modern browsers (keep for accessibility) */
+.gallery-track::-webkit-scrollbar {
+  height: 10px;
+}
+.gallery-track::-webkit-scrollbar-thumb {
+  background: rgba(16,32,63,0.08);
+  border-radius: 999px;
+}
+
+/* Mobile: switch to single-row flex snap for better touch experience */
+@media (max-width: 900px) {
+  .gallery-track {
+    display: flex;
+    gap: 14px;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .gallery-track .gallery-slide {
+    min-width: 78%; /* show partial next slide */
+    height: auto;
+    padding: 18px;
+  }
+
+  .gallery-slide img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+}
+
+/* Gallery arrow controls */
+.gallery-wrap {
+  position: relative;
+}
+
+.gallery-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 6;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(16,32,63,0.06);
+  background: rgba(255,255,255,0.95);
+  display: inline-grid;
+  place-items: center;
+  font-size: 22px;
+  color: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(16,32,63,0.06);
+}
+
+.gallery-prev { left: 8px; }
+.gallery-next { right: 8px; }
+
+.gallery-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+@media (max-width: 640px) {
+  .gallery-btn { display: none; }
 }
 
 .review-label {

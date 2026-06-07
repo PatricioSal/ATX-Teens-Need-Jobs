@@ -106,3 +106,43 @@ function renderGallery() {
 }
 
 document.addEventListener('DOMContentLoaded', renderGallery);
+
+// gallery arrow controls and keyboard support
+document.addEventListener('DOMContentLoaded', () => {
+  const track = document.getElementById('galleryTrack');
+  const prevBtn = document.querySelector('.gallery-prev');
+  const nextBtn = document.querySelector('.gallery-next');
+  if (!track || !prevBtn || !nextBtn) return;
+
+  const getScrollAmount = () => {
+    const slide = track.querySelector('.gallery-slide');
+    if (!slide) return Math.round(track.clientWidth * 0.8);
+    const slideWidth = slide.getBoundingClientRect().width;
+    const computed = getComputedStyle(track);
+    const gap = parseFloat(computed.gap || computed.columnGap) || 20;
+    return Math.round(slideWidth + gap);
+  };
+
+  nextBtn.addEventListener('click', () => {
+    track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+  });
+
+  prevBtn.addEventListener('click', () => {
+    track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+  });
+
+  const updateButtons = () => {
+    prevBtn.disabled = track.scrollLeft <= 0;
+    nextBtn.disabled = Math.ceil(track.scrollLeft + track.clientWidth) >= track.scrollWidth;
+  };
+
+  track.addEventListener('scroll', () => requestAnimationFrame(updateButtons));
+  window.addEventListener('resize', () => requestAnimationFrame(updateButtons));
+  track.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' }); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' }); }
+  });
+
+  // initial button state after slides render
+  setTimeout(updateButtons, 120);
+});
