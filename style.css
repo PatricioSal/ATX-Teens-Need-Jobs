@@ -585,7 +585,10 @@ a {
   .reviews-grid,
   .gallery-grid,
   .footer-grid,
-  .info-grid {
+  .info-grid,
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
 
   .gallery-item.gallery-image {
     display: flex;
@@ -647,17 +650,32 @@ a {
     font-weight: 700;
     color: var(--primary);
   }
-    grid-template-columns: 1fr;
-  }
 
   .header-inner {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
   }
 
   .main-nav {
     width: 100%;
     justify-content: space-between;
+    gap: 12px;
+  }
+
+  /* Text alignment and hero adjustments for smaller screens */
+  .hero-copy h2,
+  .hero-copy p {
+    text-align: left;
+  }
+
+  .hero-actions {
+    justify-content: flex-start;
+  }
+
+  .instagram-row {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 
