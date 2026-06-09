@@ -3,10 +3,10 @@
   --bg: #F7F5EF;        /* Warm off-white */
   --surface: #FDFCF8;   /* Cream white (cards) */
   --primary: #C05621;   /* Burnt Orange (primary accent) */
-  --secondary: #0E6B70; /* Deep Teal (secondary accent) */
+  --secondary: #0d6166; /* Deep Teal (secondary accent) */
   --accent: #C05621;    /* keep accent aligned with primary */
   --text: #1E1A14;      /* Warm near-black (primary text) */
-  --muted: #7A7168;     /* Medium warm gray (muted text) */
+  --muted: #49433e;     /* Medium warm gray (muted text) */
   --border: #D9D4CC;    /* Light warm tan (dividers) */
   --radius: 18px;
 }
@@ -136,6 +136,7 @@ a {
   display: inline-block;
   margin-bottom: 18px;
   color: var(--secondary);
+  text-shadow: 0 1px 8px rgba(10, 52, 58, 0.526);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
