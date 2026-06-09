@@ -1,13 +1,13 @@
 /* CSS */
 :root {
-  --bg: #f5f7fb;
-  --surface: #ffffff;
-  --primary: #122a4f;
-  --secondary: #2575fc;
-  --accent: #f4b41a;
-  --text: #1e2b43;
-  --muted: #566178;
-  --border: #e1e7f4;
+  --bg: #F7F5EF;        /* Warm off-white */
+  --surface: #FDFCF8;   /* Cream white (cards) */
+  --primary: #C05621;   /* Burnt Orange (primary accent) */
+  --secondary: #0E6B70; /* Deep Teal (secondary accent) */
+  --accent: #C05621;    /* keep accent aligned with primary */
+  --text: #1E1A14;      /* Warm near-black (primary text) */
+  --muted: #7A7168;     /* Medium warm gray (muted text) */
+  --border: #D9D4CC;    /* Light warm tan (dividers) */
   --radius: 18px;
 }
 
@@ -22,7 +22,11 @@ html {
 body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: radial-gradient(circle at 20% 30%, rgba(116,198,157,0.06), transparent 14%),
+                    radial-gradient(circle at 92% 85%, rgba(45,106,79,0.035), transparent 24%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--text);
   line-height: 1.6;
   overflow-x: hidden;
@@ -44,8 +48,8 @@ a {
 }
 
 .site-header {
-  background: #ffffff;
-  border-bottom: 1px solid #e8edf3;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -73,7 +77,7 @@ a {
   height: 50px;
   border-radius: 14px;
   background: var(--accent);
-  color: #10203f;
+  color: var(--bg);
   font-weight: 800;
   font-size: 1.1rem;
 }
@@ -103,6 +107,15 @@ a {
 
 .hero {
   padding: 80px 0 56px;
+  /* warm tint overlay to subtly mute the PNG and match the palette */
+  background-image:url('assets/austinskyline.png');
+  background-color: rgba(163, 137, 111, 0.532);
+  background-blend-mode: multiply;
+  background-size: cover;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  color: var(--bg);
 }
 
 .hero > .container {
@@ -132,6 +145,7 @@ a {
 .hero-copy h2 {
   margin: 0;
   font-size: clamp(2.25rem, 2.5vw, 3.25rem);
+  text-shadow: 0 1px 8px rgba(30, 26, 20, 0.6);
   line-height: 1.02;
   text-align: center;
 }
@@ -140,6 +154,7 @@ a {
   margin: 24px auto 28px;
   max-width: 620px;
   color: var(--muted);
+  
   font-size: 1.05rem;
   text-align: center;
 }
@@ -181,7 +196,7 @@ a {
 }
 
 .button-secondary {
-  background: #fff;
+  background: var(--surface);
   color: var(--primary);
   border-color: var(--primary);
 }
@@ -200,8 +215,8 @@ a {
   margin-top: 28px;
   padding: 20px 22px;
   border-radius: 20px;
-  background: #ffffff;
-  border: 1px solid rgba(37, 117, 252, 0.12);
+  background: var(--surface);
+  border: 1px solid rgba(116,198,157,0.10);
 }
 
 .instagram-badge {
@@ -251,7 +266,7 @@ a {
 }
 
 .stat-card-alt {
-  background: linear-gradient(180deg, #eef3ff 0%, #ffffff 100%);
+  background: linear-gradient(180deg, #F4F6F2 0%, var(--surface) 100%);
 }
 
 .stat-number {
@@ -272,15 +287,15 @@ a {
 }
 
 .section-light {
-  background: #f7f9fc;
+  background: var(--bg);
 }
 
 .section-alt {
-  background: #ffffff;
+  background: var(--surface);
 }
 
 .section-white {
-  background: #f5f7fb;
+  background: var(--bg);
 }
 
 .section-header {
@@ -417,7 +432,7 @@ a {
   padding: 16px;
   font: inherit;
   color: var(--text);
-  background: #f8fbff;
+  background: var(--bg);
 }
 
 .review-form textarea {
@@ -479,7 +494,7 @@ a {
   padding: 8px 16px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--surface);
   cursor: pointer;
   font-weight: 700;
 }
@@ -497,7 +512,7 @@ a {
 
 .star {
   font-size: 26px;
-  color: #d6dbe8;
+  color: #E6EEE9;
   cursor: pointer;
   user-select: none;
 }
@@ -654,10 +669,9 @@ a {
   margin-top: 22px;
   color: var(--text);
 }
-
 .site-footer {
-  background: #10203f;
-  color: #e7edf8;
+  background: var(--primary);
+  color: var(--bg);
   padding: 40px 0 52px;
 }
 
@@ -671,14 +685,13 @@ a {
   margin: 0 0 12px;
   font-size: 1rem;
 }
-
 .site-footer p {
   margin: 8px 0 0;
-  color: #c2d1ec;
+  color: rgba(255,255,255,0.9);
 }
 
 .site-footer a {
-  color: #a8c8ff;
+  color: var(--secondary);
 }
 
 @media (max-width: 900px) {
@@ -737,7 +750,7 @@ a {
     padding: 8px 12px;
     border-radius: 12px;
     border: 1px solid var(--border);
-    background: #fff;
+    background: var(--surface);
     cursor: pointer;
     font-weight: 600;
   }
