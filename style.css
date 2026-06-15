@@ -82,6 +82,26 @@ a {
   font-size: 1.1rem;
 }
 
+.brand-logo-link {
+  display: inline-flex;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.brand-logo-img {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brand-logo-link:hover .brand-logo-img {
+  transform: scale(1.06);
+  box-shadow: 0 6px 20px rgba(192, 86, 33, 0.25);
+}
+
 .brand h1 {
   margin: 0;
   font-size: 1.2rem;
