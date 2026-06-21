@@ -145,3 +145,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // initial button state after slides render
   setTimeout(updateButtons, 120);
 });
+

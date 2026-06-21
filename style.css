@@ -125,6 +125,12 @@ a {
   font-weight: 500;
 }
 
+.main-nav a.nav-active {
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 2px;
+}
+
 .hero {
   padding: 80px 0 56px;
   /* warm tint overlay to subtly mute the PNG and match the palette */
@@ -690,6 +696,221 @@ a {
   margin-top: 22px;
   color: var(--text);
 }
+
+/* ── Recent jobs (homepage) ── */
+.recent-jobs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 620px;
+}
+
+.recent-job-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recent-job-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(16,32,63,0.07);
+}
+
+.recent-job-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: var(--bg);
+}
+
+.recent-job-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recent-job-company {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.recent-job-role {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.recent-job-arrow {
+  margin-left: auto;
+  font-size: 1.2rem;
+  color: var(--primary);
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.recent-job-card:hover .recent-job-arrow {
+  transform: translateX(4px);
+}
+
+/* ── Jobs stack ── */
+.jobs-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 900px;
+}
+
+.job-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 28px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16,32,63,0.07);
+}
+
+.job-card-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: var(--bg);
+}
+
+.job-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.job-card-company {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.job-card-role {
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.job-card-apply {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.job-card-apply:hover {
+  background: #a8491a;
+  transform: scale(1.04);
+}
+
+/* actions row: details + apply side by side */
+.job-card-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.job-card-details-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.job-card-details-btn:hover {
+  background: var(--surface);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* collapsible details panel */
+.job-details-panel {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 20px 28px 24px;
+  margin-top: -8px;
+}
+
+.job-details-panel.open {
+  display: block;
+}
+
+.job-details-panel ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.job-details-panel li {
+  margin-bottom: 4px;
+}
+
+/* perk tags */
+.job-perks-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.job-perk-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .site-footer {
   background: var(--primary);
   color: var(--bg);

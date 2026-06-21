@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Browse open job listings from ATX Teens Need Jobs partner businesses and apply directly."
+    />
+    <title>Jobs – ATX Teens Need Jobs</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <a href="index.html" class="brand-logo-link">
+            <img src="assets/logo.jpg" alt="ATX Teens Need Jobs Logo" class="brand-logo-img" />
+          </a>
+          <div>
+            <h1>Teens Need Jobs</h1>
+            <p>Connecting Austin teens with local employers.</p>
+          </div>
+        </div>
+        <nav class="main-nav">
+          <a href="index.html#about">About</a>
+          <a href="index.html#partners">Partners</a>
+          <a href="jobs.html" class="nav-active">Jobs</a>
+          <a href="index.html#reviews">Reviews</a>
+          <a href="index.html#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="jobs" class="section section-light">
+        <div class="container">
+          <div class="section-header">
+            <h2>Open positions</h2>
+            <p>Current job listings from our partner businesses — click apply to go straight to the company's application.</p>
+          </div>
+          <div id="jobsStack" class="jobs-stack"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact" class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <h4>Get in Touch</h4>
+          <p>atxteensneedjobs@gmail.com</p>
+          <p>
+            Follow <a href="https://www.instagram.com/atxteensneedjobs" target="_blank" rel="noreferrer">@atxteensneedjobs</a>
+          </p>
+        </div>
+        <div>
+          <h4>Ready to partner?</h4>
+          <p>We help Austin businesses hire teens for local jobs and internships.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Vercel Web Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+
+    <script>
+      // ── Job listings data ──
+      // To add / remove listings just edit this array.
+      const jobs = [
+        {
+          company: 'Cinemark',
+          role: 'Theatre Team Member',
+          logo: 'assets/cinemark_logo.png',
+          url: 'https://careers.cinemark.com/search/jobdetails/theatre-team-member/9d23aae9-7ccc-4a1a-9a92-26c71c0e8804',
+          details: [
+            'Must be 16 years or older',
+            'Work as a Cashier, Usher, Box Office Associate, or Concessionist',
+            'Greet guests and provide excellent customer service',
+            'Provide information about movies, showtimes, promotions & more',
+            'Operate POS system and handle transactions accurately',
+            'Verify tickets and direct guests to the correct auditorium',
+            'Prepare food & beverages and maintain clean work areas',
+            'Help keep the theater clean, safe and enjoyable for all guests',
+            'Flexible schedule including evenings, weekends, and holidays',
+            'Work with a fun team and movie-loving guests',
+          ],
+          perks: ['Free Movies', 'Employee Discounts', 'Flexible Scheduling', 'Growth Opportunities', 'Education Assistance', 'Daily Pay'],
+        },
+        {
+          company: 'YMCA of Central Texas',
+          role: 'After School Counselor',
+          logo: 'assets/ymca_logo.jpg',
+          url: 'https://ymca-of-central-texas.breezy.hr/p/657e2a2ada26-after-school-counselor',
+          details: [
+            'Earn $13.00–$15.50/hour',
+            '$510 New Hire Bonus',
+            'Looking for energetic and responsible role models',
+            'Work with elementary students (K–5th Grade)',
+            'Monday–Friday, 2:30 PM – 6:30 PM',
+            'Create a fun, positive environment through games, activities, and learning',
+            'Gain valuable experience working with children',
+            'Summer opportunities available through full-day programs',
+          ],
+          perks: [],
+        },
+        {
+          company: 'Takavron',
+          role: 'Front Desk Associate',
+          logo: 'assets/TakavronPDF.png',
+          url: '',
+          details: [],
+          perks: [],
+        },
+      ];
+
+      // ── Render stacked cards ──
+      document.addEventListener('DOMContentLoaded', () => {
+        const stack = document.getElementById('jobsStack');
+        if (!stack) return;
+
+        jobs.forEach((job, idx) => {
+          // wrapper to keep card + dropdown together
+          const wrapper = document.createElement('div');
+          wrapper.className = 'job-card-wrapper';
+
+          const card = document.createElement('div');
+          card.className = 'job-card';
+
+          if (job.logo) {
+            const img = document.createElement('img');
+            img.src = job.logo;
+            img.alt = job.company;
+            img.className = 'job-card-logo';
+            card.appendChild(img);
+          } else {
+            const circle = document.createElement('span');
+            circle.className = 'job-card-logo';
+            circle.style.display = 'inline-flex';
+            circle.style.alignItems = 'center';
+            circle.style.justifyContent = 'center';
+            circle.style.fontWeight = '800';
+            circle.style.fontSize = '1.1rem';
+            circle.style.color = 'var(--primary)';
+            circle.textContent = job.company.charAt(0);
+            card.appendChild(circle);
+          }
+
+          const info = document.createElement('div');
+          info.className = 'job-card-info';
+
+          const name = document.createElement('span');
+          name.className = 'job-card-company';
+          name.textContent = job.company;
+          info.appendChild(name);
+
+          const role = document.createElement('span');
+          role.className = 'job-card-role';
+          role.textContent = job.role;
+          info.appendChild(role);
+
+          card.appendChild(info);
+
+          // buttons area
+          const actions = document.createElement('div');
+          actions.className = 'job-card-actions';
+
+          // More Details button (only if there are details)
+          if (job.details && job.details.length) {
+            const detailsBtn = document.createElement('button');
+            detailsBtn.className = 'job-card-details-btn';
+            detailsBtn.textContent = 'More Details ▾';
+            detailsBtn.addEventListener('click', () => {
+              const panel = wrapper.querySelector('.job-details-panel');
+              const isOpen = panel.classList.toggle('open');
+              detailsBtn.textContent = isOpen ? 'Less Details ▴' : 'More Details ▾';
+            });
+            actions.appendChild(detailsBtn);
+          }
+
+          // Apply button
+          const apply = document.createElement('a');
+          apply.className = 'job-card-apply';
+          if (job.url) {
+            apply.href = job.url;
+            apply.target = '_blank';
+            apply.rel = 'noreferrer';
+            apply.textContent = 'Apply →';
+          } else {
+            apply.textContent = 'Coming Soon';
+            apply.style.opacity = '0.5';
+            apply.style.cursor = 'default';
+          }
+          actions.appendChild(apply);
+
+          card.appendChild(actions);
+          wrapper.appendChild(card);
+
+          // Details dropdown panel
+          if (job.details && job.details.length) {
+            const panel = document.createElement('div');
+            panel.className = 'job-details-panel';
+
+            const ul = document.createElement('ul');
+            job.details.forEach((d) => {
+              const li = document.createElement('li');
+              li.textContent = d;
+              ul.appendChild(li);
+            });
+            panel.appendChild(ul);
+
+            // Perks row
+            if (job.perks && job.perks.length) {
+              const perksRow = document.createElement('div');
+              perksRow.className = 'job-perks-row';
+              job.perks.forEach((p) => {
+                const tag = document.createElement('span');
+                tag.className = 'job-perk-tag';
+                tag.textContent = p;
+                perksRow.appendChild(tag);
+              });
+              panel.appendChild(perksRow);
+            }
+
+            wrapper.appendChild(panel);
+          }
+
+          stack.appendChild(wrapper);
+        });
+      });
+    </script>
+  </body>
+</html>
