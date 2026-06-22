@@ -502,13 +502,7 @@ a {
   width: auto;
 }
 
-/* make hero container stretch full width */
-.hero > .container {
-  max-width: none;
-  width: 100%;
-  padding-left: 24px;
-  padding-right: 24px;
-}
+
 
 .review-type {
   display: flex;
