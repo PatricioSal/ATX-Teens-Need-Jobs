@@ -972,8 +972,7 @@ a {
     padding: 18px 20px;
   }
 
-  /* make header and hero containers stretch full width */
-  .site-header > .container,
+  /* make hero container stretch full width */
   .hero > .container {
     max-width: none;
     width: 100%;

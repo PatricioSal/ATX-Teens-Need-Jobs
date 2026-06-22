@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   role TEXT NOT NULL,
   logo TEXT,
   url TEXT,
+  email TEXT,
   details TEXT[] DEFAULT '{}',
   perks TEXT[] DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL

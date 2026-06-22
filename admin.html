@@ -357,6 +357,10 @@
                 <input type="url" id="jobUrl" placeholder="https://careers.company.com/..." />
               </label>
               <label>
+                Or Application Email
+                <input type="email" id="jobEmail" placeholder="e.g. careers@company.com" />
+              </label>
+              <label>
                 Job Details (One per line)
                 <textarea id="jobDetails" rows="5" placeholder="Must be 16 years or older&#10;Pay rate is $15/hour&#10;Monday to Friday schedule"></textarea>
               </label>
@@ -543,7 +547,11 @@
         info.innerHTML = `
           <h4>${job.company}</h4>
           <p>${job.role}</p>
-          <p style="font-size:0.75rem; margin-top:4px;">Apply URL: <a href="${job.url}" target="_blank">${job.url || 'None'}</a></p>
+          <p style="font-size:0.75rem; margin-top:4px;">
+            ${job.url ? `Apply URL: <a href="${job.url}" target="_blank">${job.url}</a>` : ''}
+            ${job.email ? ` | Apply Email: <a href="mailto:${job.email}">${job.email}</a>` : ''}
+            ${!job.url && !job.email ? 'No apply link/email' : ''}
+          </p>
         `;
 
         const actionGroup = document.createElement('div');
@@ -576,6 +584,7 @@
       document.getElementById('jobRole').value = job.role;
       document.getElementById('jobLogo').value = job.logo || '';
       document.getElementById('jobUrl').value = job.url || '';
+      document.getElementById('jobEmail').value = job.email || '';
       document.getElementById('jobDetails').value = (job.details || []).join('\n');
       document.getElementById('jobPerks').value = (job.perks || []).join(', ');
 
@@ -587,17 +596,18 @@
       document.getElementById('formTitle').textContent = 'Add New Listing';
       document.getElementById('submitJobBtn').textContent = 'Save Job Listing';
       document.getElementById('cancelEditBtn').style.display = 'none';
+      document.getElementById('jobEmail').value = '';
       document.getElementById('addJobForm').reset();
     }
 
     document.getElementById('cancelEditBtn').addEventListener('click', cancelEditJob);
 
-    document.getElementById('addJobForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const company = document.getElementById('jobCompany').value.trim();
       const role = document.getElementById('jobRole').value.trim();
       const logo = document.getElementById('jobLogo').value.trim();
       const url = document.getElementById('jobUrl').value.trim();
+      const email = document.getElementById('jobEmail').value.trim();
       const detailsRaw = document.getElementById('jobDetails').value;
       const perksRaw = document.getElementById('jobPerks').value;
 
@@ -612,6 +622,7 @@
             role,
             logo: logo || null,
             url: url || null,
+            email: email || null,
             details,
             perks
           })
@@ -630,6 +641,7 @@
           role,
           logo: logo || null,
           url: url || null,
+          email: email || null,
           details,
           perks
         }]);

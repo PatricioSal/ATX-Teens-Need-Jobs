@@ -187,6 +187,9 @@
             apply.target = '_blank';
             apply.rel = 'noreferrer';
             apply.textContent = 'Apply →';
+          } else if (job.email) {
+            apply.href = `mailto:${job.email}?subject=${encodeURIComponent(`Application for ${job.role} position at ${job.company}`)}`;
+            apply.textContent = 'Apply →';
           } else {
             apply.textContent = 'Coming Soon';
             apply.style.opacity = '0.5';
