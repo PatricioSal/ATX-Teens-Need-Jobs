@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Admin Dashboard for managing job listings, reviews, and statistics." />
+  <title>Admin Dashboard – ATX Teens Need Jobs</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <style>
+    /* Admin Dashboard Specific Premium Styles */
+    .admin-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 480px;
+      margin: 80px auto;
+      box-shadow: 0 10px 30px rgba(30, 26, 20, 0.05);
+    }
+
+    .auth-card h2 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: var(--primary);
+      text-align: center;
+    }
+
+    .auth-card form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .dashboard-wrapper {
+      display: none; /* Hidden until authenticated */
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .admin-header h2 {
+      margin: 0;
+      color: var(--primary);
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--primary);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .admin-card-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .admin-card-info h4 {
+      margin: 0 0 6px 0;
+      color: var(--text);
+    }
+
+    .admin-card-info p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .btn-delete {
+      background: #f8d7da;
+      color: #842029;
+      border: 1px solid #f5c2c7;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-delete:hover {
+      background: #ea868f;
+      color: #58151c;
+    }
+
+    .btn-approve {
+      background: #d1e7dd;
+      color: #0f5132;
+      border: 1px solid #badbcc;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-approve:hover {
+      background: #a3cfbb;
+      color: #0a3622;
+    }
+
+    /* Admin forms */
+    .admin-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+      align-self: start;
+    }
+
+    .admin-form label {
+      display: grid;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .admin-form input,
+    .admin-form textarea,
+    .admin-form select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      font: inherit;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #664d03;
+    }
+
+    .status-approved {
+      background: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .logout-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .alert-banner {
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .alert-success { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+    .alert-error { background: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="index.html" class="brand-logo-link">
+          <img src="assets/logo.jpg" alt="ATX Teens Need Jobs Logo" class="brand-logo-img" />
+        </a>
+        <div>
+          <h1>Teens Need Jobs</h1>
+          <p>Connecting Austin teens with local employers.</p>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html">View Site</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="admin-container">
+    <!-- 1. Authentication Card -->
+    <div id="authCard" class="auth-card">
+      <h2>Admin Login</h2>
+      <div id="loginAlert" class="alert-banner alert-error" style="display: none;"></div>
+      <form id="loginForm">
+        <label>
+          Email Address
+          <input type="email" id="loginEmail" placeholder="admin@atxteensneedjobs.com" required />
+        </label>
+        <label>
+          Password
+          <input type="password" id="loginPassword" placeholder="••••••••" required />
+        </label>
+        <button type="submit" class="button button-primary button-block" style="margin-top: 10px;">Log In</button>
+      </form>
+    </div>
+
+    <!-- 2. Main Dashboard Panel (Authenticated View) -->
+    <div id="dashboardWrapper" class="dashboard-wrapper">
+      <div class="admin-header">
+        <div>
+          <h2>Management Console</h2>
+          <p id="adminUserEmail" style="margin: 4px 0 0; color: var(--muted); font-size: 0.9rem;"></p>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Log Out</button>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="jobsTab">Jobs Board</button>
+        <button class="tab-btn" data-tab="reviewsTab">Reviews Moderation</button>
+        <button class="tab-btn" data-tab="statsTab">Edit Statistics</button>
+      </div>
+
+      <div id="globalAlert" class="alert-banner" style="display: none;"></div>
+
+      <!-- Tab 1: Jobs Management -->
+      <div id="jobsTab" class="tab-content active">
+        <div class="admin-grid">
+          <div>
+            <h3>Current Listings</h3>
+            <div id="adminJobsList" class="card-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+          <div>
+            <h3>Add New Listing</h3>
+            <form id="addJobForm" class="admin-form">
+              <label>
+                Company Name
+                <input type="text" id="jobCompany" placeholder="e.g. YMCA of Central Texas" required />
+              </label>
+              <label>
+                Job Role / Title
+                <input type="text" id="jobRole" placeholder="e.g. After School Counselor" required />
+              </label>
+              <label>
+                Logo Image Path
+                <input type="text" id="jobLogo" placeholder="e.g. assets/ymca_logo.jpg" />
+              </label>
+              <label>
+                Application URL (Apply Link)
+                <input type="url" id="jobUrl" placeholder="https://careers.company.com/..." />
+              </label>
+              <label>
+                Job Details (One per line)
+                <textarea id="jobDetails" rows="5" placeholder="Must be 16 years or older&#10;Pay rate is $15/hour&#10;Monday to Friday schedule"></textarea>
+              </label>
+              <label>
+                Perks / Tags (Comma-separated)
+                <input type="text" id="jobPerks" placeholder="Free Movies, Employee Discount, Flexible Schedule" />
+              </label>
+              <button type="submit" class="button button-primary">Save Job Listing</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Reviews Management -->
+      <div id="reviewsTab" class="tab-content">
+        <div class="admin-grid" style="grid-template-columns: 1fr;">
+          <div>
+            <h3>Moderation Queue</h3>
+            <div id="adminReviewsList" class="card-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Statistics Management -->
+      <div id="statsTab" class="tab-content">
+        <div class="admin-grid" style="grid-template-columns: 1fr; max-width: 600px;">
+          <div>
+            <h3>Update Website Metrics</h3>
+            <form id="updateStatsForm" class="admin-form">
+              <label>
+                Partnered Businesses Count
+                <input type="number" id="statBusinesses" required />
+              </label>
+              <label>
+                Successful Placements Count
+                <input type="number" id="statPlacements" required />
+              </label>
+              <label>
+                Jobs Posted Count
+                <input type="number" id="statJobs" required />
+              </label>
+              <label>
+                Internships Filled Count
+                <input type="number" id="statInternships" required />
+              </label>
+              <button type="submit" class="button button-primary">Update Metrics</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="init-supabase.js"></script>
+  <script>
+    let supabaseClient = null;
+
+    // Wait for Supabase to initialize
+    window.supabasePromise.then((client) => {
+      if (!client) {
+        alert("Failed to connect to Supabase. Check your console and .env configuration.");
+        return;
+      }
+      supabaseClient = client;
+      checkSession();
+    });
+
+    // Check if user is already logged in
+    async function checkSession() {
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      if (session) {
+        showDashboard(session.user);
+      } else {
+        showAuth();
+      }
+    }
+
+    function showDashboard(user) {
+      document.getElementById('authCard').style.display = 'none';
+      document.getElementById('dashboardWrapper').style.display = 'block';
+      document.getElementById('adminUserEmail').textContent = `Logged in as: ${user.email}`;
+      
+      // Load current tab data
+      loadCurrentTabData();
+    }
+
+    function showAuth() {
+      document.getElementById('authCard').style.display = 'block';
+      document.getElementById('dashboardWrapper').style.display = 'none';
+    }
+
+    // Tab Switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        btn.classList.add('active');
+        const contentId = btn.dataset.tab;
+        document.getElementById(contentId).classList.add('active');
+        
+        loadCurrentTabData();
+      });
+    });
+
+    function loadCurrentTabData() {
+      const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+      if (activeTab === 'jobsTab') {
+        loadAdminJobs();
+      } else if (activeTab === 'reviewsTab') {
+        loadAdminReviews();
+      } else if (activeTab === 'statsTab') {
+        loadAdminStats();
+      }
+    }
+
+    function showAlert(type, message) {
+      const banner = document.getElementById('globalAlert');
+      banner.className = `alert-banner alert-${type}`;
+      banner.textContent = message;
+      banner.style.display = 'block';
+      setTimeout(() => {
+        banner.style.display = 'none';
+      }, 5000);
+    }
+
+    // --- AUTH FLOW ---
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const alertDiv = document.getElementById('loginAlert');
+      alertDiv.style.display = 'none';
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        alertDiv.textContent = error.message;
+        alertDiv.style.display = 'block';
+      } else {
+        showDashboard(data.user);
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      showAuth();
+    });
+
+    // --- JOBS BOARD ---
+    async function loadAdminJobs() {
+      const listContainer = document.getElementById('adminJobsList');
+      listContainer.innerHTML = '<p style="opacity:0.7;">Loading jobs...</p>';
+
+      const { data: jobs, error } = await supabaseClient
+        .from('jobs')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        listContainer.innerHTML = `<p style="color:red;">Error loading jobs: ${error.message}</p>`;
+        return;
+      }
+
+      if (!jobs.length) {
+        listContainer.innerHTML = '<p style="opacity:0.7;">No jobs found in database.</p>';
+        return;
+      }
+
+      listContainer.innerHTML = '';
+      jobs.forEach(job => {
+        const item = document.createElement('div');
+        item.className = 'admin-card-item';
+
+        const info = document.createElement('div');
+        info.className = 'admin-card-info';
+        info.innerHTML = `
+          <h4>${job.company}</h4>
+          <p>${job.role}</p>
+          <p style="font-size:0.75rem; margin-top:4px;">Apply URL: <a href="${job.url}" target="_blank">${job.url || 'None'}</a></p>
+        `;
+
+        const action = document.createElement('button');
+        action.className = 'btn-delete';
+        action.textContent = 'Remove';
+        action.addEventListener('click', () => deleteJob(job.id));
+
+        item.appendChild(info);
+        item.appendChild(action);
+        listContainer.appendChild(item);
+      });
+    }
+
+    document.getElementById('addJobForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const company = document.getElementById('jobCompany').value.trim();
+      const role = document.getElementById('jobRole').value.trim();
+      const logo = document.getElementById('jobLogo').value.trim();
+      const url = document.getElementById('jobUrl').value.trim();
+      const detailsRaw = document.getElementById('jobDetails').value;
+      const perksRaw = document.getElementById('jobPerks').value;
+
+      const details = detailsRaw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const perks = perksRaw.split(',').map(p => p.trim()).filter(p => p.length > 0);
+
+      const { error } = await supabaseClient.from('jobs').insert([{
+        company,
+        role,
+        logo: logo || null,
+        url: url || null,
+        details,
+        perks
+      }]);
+
+      if (error) {
+        showAlert('error', `Failed to create listing: ${error.message}`);
+      } else {
+        showAlert('success', 'Listing posted successfully!');
+        document.getElementById('addJobForm').reset();
+        loadAdminJobs();
+      }
+    });
+
+    async function deleteJob(id) {
+      if (!confirm("Are you sure you want to remove this job listing?")) return;
+      const { error } = await supabaseClient.from('jobs').delete().eq('id', id);
+      if (error) {
+        showAlert('error', `Failed to delete listing: ${error.message}`);
+      } else {
+        showAlert('success', 'Job listing removed.');
+        loadAdminJobs();
+      }
+    }
+
+    // --- REVIEWS MODERATION ---
+    async function loadAdminReviews() {
+      const listContainer = document.getElementById('adminReviewsList');
+      listContainer.innerHTML = '<p style="opacity:0.7;">Loading reviews...</p>';
+
+      const { data: reviews, error } = await supabaseClient
+        .from('reviews')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        listContainer.innerHTML = `<p style="color:red;">Error loading reviews: ${error.message}</p>`;
+        return;
+      }
+
+      if (!reviews.length) {
+        listContainer.innerHTML = '<p style="opacity:0.7;">No reviews submitted yet.</p>';
+        return;
+      }
+
+      listContainer.innerHTML = '';
+      reviews.forEach(review => {
+        const item = document.createElement('div');
+        item.className = 'admin-card-item';
+
+        const info = document.createElement('div');
+        info.className = 'admin-card-info';
+        
+        const starsText = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+        const statusClass = review.approved ? 'status-approved' : 'status-pending';
+        const statusText = review.approved ? 'Approved' : 'Pending Approval';
+
+        info.innerHTML = `
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom: 6px;">
+            <h4 style="margin:0;">${review.reviewer} (${review.reviewer_type})</h4>
+            <span class="status-badge ${statusClass}">${statusText}</span>
+          </div>
+          <p style="color: #ffb800; font-size:1.1rem; margin-bottom: 8px;">${starsText}</p>
+          <p style="font-style: italic; color: var(--text);">“${review.review_text}”</p>
+        `;
+
+        const actionGroup = document.createElement('div');
+        
+        if (!review.approved) {
+          const btnApprove = document.createElement('button');
+          btnApprove.className = 'btn-approve';
+          btnApprove.textContent = 'Approve';
+          btnApprove.addEventListener('click', () => updateReviewStatus(review.id, true));
+          actionGroup.appendChild(btnApprove);
+        } else {
+          const btnRevoke = document.createElement('button');
+          btnRevoke.className = 'btn-delete';
+          btnRevoke.style.marginRight = '8px';
+          btnRevoke.style.backgroundColor = '#fff3cd';
+          btnRevoke.style.color = '#664d03';
+          btnRevoke.style.borderColor = '#ffecb5';
+          btnRevoke.textContent = 'Revoke';
+          btnRevoke.addEventListener('click', () => updateReviewStatus(review.id, false));
+          actionGroup.appendChild(btnRevoke);
+        }
+
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'btn-delete';
+        btnDelete.textContent = 'Delete';
+        btnDelete.addEventListener('click', () => deleteReview(review.id));
+        actionGroup.appendChild(btnDelete);
+
+        item.appendChild(info);
+        item.appendChild(actionGroup);
+        listContainer.appendChild(item);
+      });
+    }
+
+    async function updateReviewStatus(id, approved) {
+      const { error } = await supabaseClient.from('reviews').update({ approved }).eq('id', id);
+      if (error) {
+        showAlert('error', `Failed to update review: ${error.message}`);
+      } else {
+        showAlert('success', approved ? 'Review approved for public display!' : 'Review visibility revoked.');
+        loadAdminReviews();
+      }
+    }
+
+    async function deleteReview(id) {
+      if (!confirm("Are you sure you want to delete this review permanently?")) return;
+      const { error } = await supabaseClient.from('reviews').delete().eq('id', id);
+      if (error) {
+        showAlert('error', `Failed to delete review: ${error.message}`);
+      } else {
+        showAlert('success', 'Review deleted.');
+        loadAdminReviews();
+      }
+    }
+
+    // --- STATISTICS EDITOR ---
+    async function loadAdminStats() {
+      const { data: stats, error } = await supabaseClient.from('stats').select('*').eq('id', 1).single();
+      if (error) {
+        showAlert('error', `Failed to load statistics: ${error.message}`);
+        return;
+      }
+      
+      document.getElementById('statBusinesses').value = stats.businesses_partnered;
+      document.getElementById('statPlacements').value = stats.placements_completed;
+      document.getElementById('statJobs').value = stats.jobs_posted;
+      document.getElementById('statInternships').value = stats.internships_filled;
+    }
+
+    document.getElementById('updateStatsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const businesses = Number(document.getElementById('statBusinesses').value);
+      const placements = Number(document.getElementById('statPlacements').value);
+      const jobs = Number(document.getElementById('statJobs').value);
+      const internships = Number(document.getElementById('statInternships').value);
+
+      const { error } = await supabaseClient
+        .from('stats')
+        .update({
+          businesses_partnered: businesses,
+          placements_completed: placements,
+          jobs_posted: jobs,
+          internships_filled: internships
+        })
+        .eq('id', 1);
+
+      if (error) {
+        showAlert('error', `Failed to update metrics: ${error.message}`);
+      } else {
+        showAlert('success', 'Website metrics updated successfully!');
+        loadAdminStats();
+      }
+    });
+  </script>
+</body>
+</html>

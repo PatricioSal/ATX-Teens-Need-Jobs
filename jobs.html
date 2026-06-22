@@ -67,10 +67,11 @@
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="init-supabase.js"></script>
     <script>
-      // ── Job listings data ──
-      // To add / remove listings just edit this array.
-      const jobs = [
+      // ── Hardcoded fallback jobs ──
+      const fallbackJobs = [
         {
           company: 'Cinemark',
           role: 'Theatre Team Member',
@@ -118,12 +119,12 @@
       ];
 
       // ── Render stacked cards ──
-      document.addEventListener('DOMContentLoaded', () => {
+      function buildJobCards(jobsList) {
         const stack = document.getElementById('jobsStack');
         if (!stack) return;
+        stack.innerHTML = ''; // Clear loading or previous items
 
-        jobs.forEach((job, idx) => {
-          // wrapper to keep card + dropdown together
+        jobsList.forEach((job) => {
           const wrapper = document.createElement('div');
           wrapper.className = 'job-card-wrapper';
 
@@ -164,11 +165,9 @@
 
           card.appendChild(info);
 
-          // buttons area
           const actions = document.createElement('div');
           actions.className = 'job-card-actions';
 
-          // More Details button (only if there are details)
           if (job.details && job.details.length) {
             const detailsBtn = document.createElement('button');
             detailsBtn.className = 'job-card-details-btn';
@@ -181,7 +180,6 @@
             actions.appendChild(detailsBtn);
           }
 
-          // Apply button
           const apply = document.createElement('a');
           apply.className = 'job-card-apply';
           if (job.url) {
@@ -199,7 +197,6 @@
           card.appendChild(actions);
           wrapper.appendChild(card);
 
-          // Details dropdown panel
           if (job.details && job.details.length) {
             const panel = document.createElement('div');
             panel.className = 'job-details-panel';
@@ -212,7 +209,6 @@
             });
             panel.appendChild(ul);
 
-            // Perks row
             if (job.perks && job.perks.length) {
               const perksRow = document.createElement('div');
               perksRow.className = 'job-perks-row';
@@ -230,6 +226,43 @@
 
           stack.appendChild(wrapper);
         });
+      }
+
+      // Initialize Dynamic Loading
+      document.addEventListener('DOMContentLoaded', () => {
+        const stack = document.getElementById('jobsStack');
+        if (stack) {
+          stack.innerHTML = '<div style="text-align:center; padding: 3rem 0; opacity: 0.7; font-weight: 500;">Loading jobs...</div>';
+        }
+
+        if (window.supabasePromise) {
+          window.supabasePromise.then(async (supabaseClient) => {
+            if (!supabaseClient) {
+              buildJobCards(fallbackJobs);
+              return;
+            }
+
+            try {
+              const { data: dbJobs, error } = await supabaseClient
+                .from('jobs')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+              if (error) throw error;
+
+              if (dbJobs && dbJobs.length > 0) {
+                buildJobCards(dbJobs);
+              } else {
+                buildJobCards(fallbackJobs);
+              }
+            } catch (err) {
+              console.error("Error loading jobs from Supabase:", err);
+              buildJobCards(fallbackJobs);
+            }
+          });
+        } else {
+          buildJobCards(fallbackJobs);
+        }
       });
     </script>
   </body>
