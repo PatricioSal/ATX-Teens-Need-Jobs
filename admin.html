@@ -602,6 +602,7 @@
 
     document.getElementById('cancelEditBtn').addEventListener('click', cancelEditJob);
 
+    document.getElementById('addJobForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const company = document.getElementById('jobCompany').value.trim();
       const role = document.getElementById('jobRole').value.trim();
