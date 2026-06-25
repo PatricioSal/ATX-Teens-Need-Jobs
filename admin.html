@@ -272,6 +272,129 @@
 
     .alert-success { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
     .alert-error { background: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+
+    /* Company Logo File Upload Styles */
+    .file-upload-dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      background: var(--bg);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+      gap: 8px;
+    }
+
+    .file-upload-dropzone:hover,
+    .file-upload-dropzone.dragover {
+      border-color: var(--primary);
+      background: rgba(192, 86, 33, 0.02);
+      box-shadow: 0 4px 12px rgba(192, 86, 33, 0.04);
+    }
+
+    .dropzone-prompt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    .dropzone-prompt strong {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .upload-icon {
+      color: var(--primary);
+      opacity: 0.8;
+      transition: transform 0.2s ease;
+    }
+
+    .file-upload-dropzone:hover .upload-icon {
+      transform: translateY(-3px);
+    }
+
+    .file-limits {
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.75;
+    }
+
+    .dropzone-preview {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .dropzone-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .remove-logo-btn {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #f8d7da;
+      color: #842029;
+      border: 1px solid #f5c2c7;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .remove-logo-btn:hover {
+      background: #ea868f;
+      color: #58151c;
+      transform: scale(1.1);
+    }
+
+    /* Progress bar for upload */
+    .upload-progress-container {
+      width: 100%;
+      background-color: var(--border);
+      border-radius: 999px;
+      height: 6px;
+      overflow: hidden;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .upload-progress-bar {
+      height: 100%;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.1s ease;
+    }
   </style>
 </head>
 <body>
@@ -349,7 +472,27 @@
                 <input type="text" id="jobRole" placeholder="e.g. After School Counselor" required />
               </label>
               <label>
-                Logo Image Path
+                Company Logo Image
+                <div class="file-upload-dropzone" id="logoDropzone">
+                  <input type="file" id="jobLogoFile" accept="image/*" style="display: none;" />
+                  <div class="dropzone-prompt" id="dropzonePrompt">
+                    <svg class="upload-icon" viewBox="0 0 24 24" width="32" height="32">
+                      <path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                    </svg>
+                    <span>Drag & drop logo here, or <strong>browse files</strong></span>
+                    <span class="file-limits">Supports JPG, PNG, WEBP, GIF (Max 2MB)</span>
+                  </div>
+                  <div class="dropzone-preview" id="logoPreviewContainer" style="display: none;">
+                    <img id="logoPreview" src="" alt="Logo Preview" />
+                    <button type="button" class="remove-logo-btn" id="removeLogoBtn" title="Remove image">&times;</button>
+                  </div>
+                  <div class="upload-progress-container" id="uploadProgressContainer">
+                    <div class="upload-progress-bar" id="uploadProgressBar"></div>
+                  </div>
+                </div>
+              </label>
+              <label>
+                Or Logo Image Path / URL (Optional fallback)
                 <input type="text" id="jobLogo" placeholder="e.g. assets/ymca_logo.jpg" />
               </label>
               <label>
@@ -517,6 +660,94 @@
 
     let editingJobId = null;
 
+    // --- LOGO UPLOAD UI ELEMENTS & STATE ---
+    let selectedLogoFile = null;
+
+    const logoDropzone = document.getElementById('logoDropzone');
+    const jobLogoFile = document.getElementById('jobLogoFile');
+    const dropzonePrompt = document.getElementById('dropzonePrompt');
+    const logoPreviewContainer = document.getElementById('logoPreviewContainer');
+    const logoPreview = document.getElementById('logoPreview');
+    const removeLogoBtn = document.getElementById('removeLogoBtn');
+    const uploadProgressContainer = document.getElementById('uploadProgressContainer');
+    const uploadProgressBar = document.getElementById('uploadProgressBar');
+    const jobLogoInput = document.getElementById('jobLogo');
+
+    // Trigger file selection when clicking dropzone
+    logoDropzone.addEventListener('click', (e) => {
+      if (e.target.closest('#removeLogoBtn')) return;
+      jobLogoFile.click();
+    });
+
+    // File input change
+    jobLogoFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) handleSelectedFile(file);
+    });
+
+    // Drag & Drop event listeners
+    ['dragenter', 'dragover'].forEach(eventName => {
+      logoDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        logoDropzone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      logoDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        logoDropzone.classList.remove('dragover');
+      }, false);
+    });
+
+    logoDropzone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const file = dt.files[0];
+      if (file) {
+        jobLogoFile.files = dt.files;
+        handleSelectedFile(file);
+      }
+    }, false);
+
+    function handleSelectedFile(file) {
+      if (!file.type.startsWith('image/')) {
+        showAlert('error', 'Please upload an image file.');
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        showAlert('error', 'File size exceeds 2MB limit.');
+        return;
+      }
+
+      selectedLogoFile = file;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        logoPreview.src = e.target.result;
+        dropzonePrompt.style.display = 'none';
+        logoPreviewContainer.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Remove selected logo
+    removeLogoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      resetLogoPreview();
+    });
+
+    function resetLogoPreview() {
+      selectedLogoFile = null;
+      jobLogoFile.value = '';
+      logoPreview.src = '';
+      logoPreviewContainer.style.display = 'none';
+      dropzonePrompt.style.display = 'flex';
+      uploadProgressContainer.style.display = 'none';
+      uploadProgressBar.style.width = '0%';
+      jobLogoInput.value = '';
+    }
+
+
     // --- JOBS BOARD ---
     async function loadAdminJobs() {
       const listContainer = document.getElementById('adminJobsList');
@@ -588,6 +819,17 @@
       document.getElementById('jobDetails').value = (job.details || []).join('\n');
       document.getElementById('jobPerks').value = (job.perks || []).join(', ');
 
+      // Show current logo in the preview container if it exists
+      if (job.logo) {
+        logoPreview.src = job.logo;
+        dropzonePrompt.style.display = 'none';
+        logoPreviewContainer.style.display = 'flex';
+      } else {
+        logoPreview.src = '';
+        logoPreviewContainer.style.display = 'none';
+        dropzonePrompt.style.display = 'flex';
+      }
+
       document.getElementById('addJobForm').scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -598,6 +840,7 @@
       document.getElementById('cancelEditBtn').style.display = 'none';
       document.getElementById('jobEmail').value = '';
       document.getElementById('addJobForm').reset();
+      resetLogoPreview();
     }
 
     document.getElementById('cancelEditBtn').addEventListener('click', cancelEditJob);
@@ -615,13 +858,63 @@
       const details = detailsRaw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
       const perks = perksRaw.split(',').map(p => p.trim()).filter(p => p.length > 0);
 
+      // Disable submit button during upload/save
+      const submitBtn = document.getElementById('submitJobBtn');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      let finalLogoUrl = logo;
+
+      if (selectedLogoFile) {
+        try {
+          // Show progress bar
+          uploadProgressContainer.style.display = 'block';
+          uploadProgressBar.style.width = '20%';
+
+          const fileExt = selectedLogoFile.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+          const filePath = fileName;
+
+          uploadProgressBar.style.width = '50%';
+
+          // Upload file to 'company-logos' bucket
+          const { data: uploadData, error: uploadError } = await supabaseClient.storage
+            .from('company-logos')
+            .upload(filePath, selectedLogoFile, {
+              cacheControl: '3600',
+              upsert: true
+            });
+
+          if (uploadError) throw uploadError;
+
+          uploadProgressBar.style.width = '80%';
+
+          // Get public URL
+          const { data: publicUrlData } = supabaseClient.storage
+            .from('company-logos')
+            .getPublicUrl(filePath);
+
+          finalLogoUrl = publicUrlData.publicUrl;
+          uploadProgressBar.style.width = '100%';
+          
+          await new Promise(r => setTimeout(r, 300));
+        } catch (uploadError) {
+          showAlert('error', `Failed to upload logo: ${uploadError.message}`);
+          uploadProgressContainer.style.display = 'none';
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+          return;
+        }
+      }
+
       if (editingJobId) {
         const { error } = await supabaseClient
           .from('jobs')
           .update({
             company,
             role,
-            logo: logo || null,
+            logo: finalLogoUrl || null,
             url: url || null,
             email: email || null,
             details,
@@ -640,7 +933,7 @@
         const { error } = await supabaseClient.from('jobs').insert([{
           company,
           role,
-          logo: logo || null,
+          logo: finalLogoUrl || null,
           url: url || null,
           email: email || null,
           details,
@@ -651,10 +944,13 @@
           showAlert('error', `Failed to create listing: ${error.message}`);
         } else {
           showAlert('success', 'Listing posted successfully!');
-          document.getElementById('addJobForm').reset();
+          cancelEditJob();
           loadAdminJobs();
         }
       }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText;
     });
 
     async function deleteJob(id) {

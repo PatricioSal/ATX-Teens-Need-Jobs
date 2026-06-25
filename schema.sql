@@ -53,3 +53,26 @@ CREATE POLICY "Allow public select on stats" ON stats FOR SELECT USING (true);
 CREATE POLICY "Allow admin all on jobs" ON jobs TO authenticated USING (true) WITH CHECK (true);
 CREATE POLICY "Allow admin all on reviews" ON reviews TO authenticated USING (true) WITH CHECK (true);
 CREATE POLICY "Allow admin update on stats" ON stats FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+-- 4. Storage Bucket for Company Logos
+-- Insert the public bucket for company logos
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('company-logos', 'company-logos', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Allow public access to view logos
+CREATE POLICY "Allow public read access" ON storage.objects
+  FOR SELECT TO public USING (bucket_id = 'company-logos');
+
+-- Allow authenticated users to upload logos
+CREATE POLICY "Allow admin upload" ON storage.objects
+  FOR INSERT TO authenticated WITH CHECK (bucket_id = 'company-logos');
+
+-- Allow authenticated users to update logos
+CREATE POLICY "Allow admin update" ON storage.objects
+  FOR UPDATE TO authenticated USING (bucket_id = 'company-logos') WITH CHECK (bucket_id = 'company-logos');
+
+-- Allow authenticated users to delete logos
+CREATE POLICY "Allow admin delete" ON storage.objects
+  FOR DELETE TO authenticated USING (bucket_id = 'company-logos');
+
